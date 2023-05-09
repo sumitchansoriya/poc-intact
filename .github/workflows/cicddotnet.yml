@@ -37,6 +37,6 @@ jobs:
       uses: docker/build-push-action@v2
       with:
         push: true
-        tags: githubactionsacr.azurecr.io/dotnetsample:${{ github.run_number }}
+        tags: acrpocintact.azurecr.io/dotnetsample:${{ github.run_number }}
         file: Dockerfile
     
