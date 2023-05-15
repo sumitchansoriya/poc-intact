@@ -8,7 +8,10 @@ on:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
-
+env:
+  AZURE_WEBAPP_NAME: dotnetsample    # set this to your application's name
+  AZURE_WEBAPP_PACKAGE_PATH: '.'      # set this to the path to your web app project, defaults to the repository root
+  
 jobs:
   build:
 
@@ -39,4 +42,17 @@ jobs:
         push: true
         tags: acrpocintact.azurecr.io/dotnetsample:${{ github.run_number }}
         file: Dockerfile.linux
-   #test 
+    
+    - name: Publish
+      run: dotnet publish -c Release --property:PublishDir='${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/myapp' 
+          
+      # Deploy to Azure Web apps
+    - name: 'Run Azure webapp deploy action using publish profile credentials'
+      uses: azure/webapps-deploy@v2
+      with: 
+        app-name: ${{ env.AZURE_WEBAPP_NAME }} # Replace with your app name
+        package: '${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/myapp'
+      
+    - name: logout
+      run: |
+        az logout
